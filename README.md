@@ -2,7 +2,7 @@
 
 ### a cheap, open-source, 3d-printable mobile manipulator.
 
-![babbage](docs/images/babbage.png)
+![babbage](docs/images/babbage.gif)
 
 babbage is a small mobile robot with a holonomic drivetrain, a 4-dof arm, a webcam, and a raspberry pi.
 
