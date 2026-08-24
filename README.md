@@ -4,6 +4,10 @@
 
 ![babbage](docs/images/ascii-art.gif)
 
+<p align="center">
+  <sub>made with grainrad!</sub>
+</p>
+
 babbage is a small mobile robot with a holonomic drivetrain, a 4-dof arm, a webcam, and a raspberry pi.
 
 the idea is pretty simple: **make a robot that you can actually build.**
