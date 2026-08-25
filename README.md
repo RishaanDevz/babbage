@@ -8,33 +8,36 @@
   <sub>made with grainrad!</sub>
 </p>
 
-babbage is a small mobile robot with a holonomic drivetrain, a 4-dof arm, a webcam, and a raspberry pi.
+babbage is a small mobile robot with a holonomic drivetrain, a 4-dof arm, a gripper, a webcam, and a raspberry pi.
 
 the idea is pretty simple: **make a robot that you can actually build.**
 
-it's still very much a work in progress, but the current prototype can drive around, detect apriltags, move toward them, and the user can teleoperate its arm well enough to poke an apriltag cube.
-
-the gripper is currently the thing standing between "poke the cube" and "actually pick up the cube."
+it's still a work in progress, but the current prototype can drive around, detect apriltags, drive toward them, and use its arm and gripper to pick up an apriltag cube.
 
 ## what is it?
 
-babbage is a platform for messing around with robotics without needing a robotics lab.
+babbage is basically a platform for messing around with robotics without needing a robotics lab.
 
-the base uses a 4-wheel holonomic x-drive with omniwheels, while a 4-dof arm sits on top. a raspberry pi handles the higher-level software and a webcam provides the robot's eyes.
+the base is a 4-wheel holonomic x-drive with omniwheels, with a 4-dof arm mounted on top. a raspberry pi handles the higher-level software and a usb webcam gives it vision.
 
-the current hardware is intentionally pretty basic:
+the hardware is intentionally pretty basic:
 
 * raspberry pi 5 1gb (pi 4 or newer should work too)
 * 4 × ga25-370 dc gearmotors
 * 4 × omniwheels
 * tb6612fng motor driver
 * pca9685 servo controller
-* a collection of hobby servos (current version uses 2 MG996Rs, a DS3218 30kg/cm servo, and an MG90 for the wrist joint.)
+* 2 × mg996r servos
+* 1 × ds3218 30kg/cm servo
+* 1 × mg90 servo
+* 3d-printed gripper
 * usb webcam
-* 12v power (current prototype im releasing is tethered, and relies on an external wall plug)
+* 12v power
 * a lot of 3d printed plastic
 
-the ga25-370s actually have quadrature encoders, but babbage doesn't use them yet. the drivetrain is currently open-loop because it's part of the future goal for babbage-vla, a compute cheap VLA that can run on a PC like an m1 Mac Mini and have it control babbage.
+the ga25-370s actually have quadrature encoders, but babbage doesn't use them yet. the drivetrain is currently open-loop.
+
+that's partly because i want the hardware to stay simple, but it's also useful for the eventual **babbage-vla** project, where the goal is to have a relatively cheap model running on something like an m1 mac mini control the robot.
 
 ## what can it do?
 
@@ -45,41 +48,42 @@ right now:
 * detect apriltags
 * drive toward apriltags
 * teleoperate the arm
-* move the arm toward an apriltag cube
-* run the whole thing from a raspberry pi (i use a pi 5 1gb)
+* control the gripper
+* pick up an apriltag cube
+* run the whole thing from a raspberry pi
 
-eventually:
+there's still a lot missing:
 
-* actually pick things up
-* autonomous manipulation
 * proper localization
 * encoder-based odometry
+* autonomous grasping
 * better motion planning
-* and, hopefully, considerably more intelligent things
+* autonomous task execution
+* and eventually some kind of actual intelligence
 
 ## the bigger idea
 
-the long-term goal isn't really just to make one robot.
+the point of babbage isn't really to make one finished robot.
 
-i want babbage to be a cheap physical platform for experimenting with things like computer vision, robotics, imitation learning, reinforcement learning, and embodied ai.
+i want it to be a cheap physical platform for messing around with computer vision, robotics, imitation learning, reinforcement learning, and embodied ai.
 
-ideally, you should be able to tell it something like:
+ideally, you could eventually give it something like:
 
 > "go find the red cube and put it on the table."
 
-and have a VLA figure out which robot functions it needs to call to make that happen.
+and have a model figure out how to use the robot's functions to actually do it.
 
-and eventually, if i can afford to build more than one of these things, i'd love to experiment with multiple babbages working together.
+that's where babbage-vla comes in.
 
-that's a problem for future me.
+if i end up building more of these, i'd also like to try having multiple babbages work together. but that's getting a bit ahead of where the project is right now.
 
 ## building one
 
-the mechanical parts are designed in fusion and are intended to be printable on relatively normal consumer 3d printers.
+the mechanical parts are designed in fusion and are meant to be printable on a normal consumer 3d printer.
 
-so far i've tested everything in pla on an ender 3 v3 se. petg should work too, although i haven't done nearly as much testing with it.
+i've been printing the current parts in pla on an ender 3 v3 se. petg should probably work too, although i haven't tested it nearly as much.
 
-the goal is to release both the editable source files and simpler stls so you don't need to know cad just to build the robot.
+the plan is to release both the editable fusion files and simpler stls, so you don't need to know cad to build one.
 
 the repo will include:
 
@@ -91,15 +95,13 @@ the repo will include:
 * assembly documentation
 * parts lists
 
-the exact bill of materials is still being figured out, but a complete build should land somewhere around **$250 cad-ish**, depending heavily on where you source everything and how aggressively you shop for parts.
+the exact bill of materials is still being worked out, but i'm aiming for roughly **$250 cad** for a complete build. obviously that depends on where you buy everything and how much you already have lying around.
 
 ## software
 
 babbage runs python on the raspberry pi.
 
-there isn't a giant software stack hiding underneath it. the idea is to keep things understandable enough that someone who is new to robotics can actually read the code and figure out what's happening.
-
-the pi handles the higher-level stuff while the motor and servo controllers handle the actual hardware.
+i'm trying to keep the software fairly straightforward instead of building some enormous robotics stack around it. the pi handles the higher-level stuff, while the motor and servo controllers deal with the hardware.
 
 ```text
                  ┌───────────────┐
@@ -115,18 +117,16 @@ the pi handles the higher-level stuff while the motor and servo controllers hand
        │             │       │             │
        └──────┬──────┘       └──────┬──────┘
               │                     │
-        4 × ga25-370          4-dof arm
+        4 × ga25-370          4-dof arm + gripper
 ```
 
 ## roadmap
-
-this thing is going to change a lot.
 
 ### mechanical
 
 * [x] holonomic drivetrain
 * [x] 4-dof arm
-* [ ] proper gripper
+* [x] gripper
 * [ ] improve arm design
 * [ ] improve drivetrain
 * [ ] finalize printable parts
@@ -149,6 +149,8 @@ this thing is going to change a lot.
 * [x] apriltag detection
 * [x] apriltag navigation
 * [x] arm control
+* [x] gripper control
+* [x] basic object pickup
 * [ ] autonomous grasping
 * [ ] localization
 * [ ] motion planning
@@ -165,18 +167,18 @@ this thing is going to change a lot.
 
 because charles babbage built machines that were wildly ahead of what was practical at the time.
 
-also, "babbage" sounded better than LoCAR
+also, "babbage" sounded better than LoCAR.
 
 ## contributing
 
 babbage is open source, and i'd like other people to mess with it.
 
-if you build one, redesign something, make a better gripper, add a sensor, improve the software, or just do something stupid with it that i didn't think of, i'd love to see it.
+if you build one, redesign something, make a better gripper, add a sensor, improve the software, or do something weird with it that i didn't think of, i'd love to see it.
 
-the project is intentionally still a little rough, that's kind of the whole point.
+it's intentionally still a little rough. i'd rather have people actually build it and break it than spend another six months trying to make the repo look finished.
 
 ---
 
 **babbage is a robot you can build, modify, break, and teach things to.**
 
-go crazy!
+go crazy.
